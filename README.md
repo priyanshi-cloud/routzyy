@@ -1,55 +1,146 @@
 # Routzy
 
-Routzy is a simplified college transport management and live bus-tracking MVP built with HTML, CSS, vanilla JavaScript, Node.js, Express, SQLite, Socket.IO, and Leaflet/OpenStreetMap.
+Routzy is a smart college transport management system for live campus bus tracking.
+
+## Live Project
+
+**Working deployment:** https://routzyy.onrender.com
+
+The deployed project uses HTTPS and Node.js 22.
+
+> The free Render instance may sleep after inactivity. Opening the link may take up to 50 seconds to start the app.
+
+## Demo Accounts
+
+| Role | Username | Password |
+|---|---|---|
+| Admin | `admin` | `Routzy@123` |
+| Student | `student` | `Student@123` |
+| Driver | `driver` | `Driver@123` |
+
+These are demo credentials for the college project only.
+
+## Demo Workflow
+
+1. Open the live project and select **Sign in**.
+2. Sign in with the **Admin** account to review buses, routes, drivers, and students.
+3. Open another browser window or browser profile and sign in with the **Driver** account.
+4. Start GPS tracking and allow location permission.
+5. Open another window or browser profile and sign in with the **Student** account.
+6. Open **Live Tracking** to receive the driver's latest bus location through Socket.IO.
+7. Return to the Admin dashboard and view the latest bus status and timestamp.
+
+## Features
+
+- Admin dashboard for transport management
+- Driver dashboard for GPS location sharing
+- Student dashboard for live route and bus tracking
+- Admin, student, and driver authentication
+- SQLite database with seeded demo data
+- Socket.IO live-location updates
+- OpenStreetMap and Leaflet map interface
+- Responsive web interface
+
+## Technology Stack
+
+- HTML, CSS, and vanilla JavaScript
+- Node.js
+- Express
+- SQLite with `better-sqlite3`
+- Socket.IO
+- Express sessions
+- bcrypt password hashing
+- Leaflet and OpenStreetMap
 
 ## Requirements
-- Node.js 18 or newer (Node.js 20 LTS recommended)
+
+- Node.js 22 is recommended
 - npm
-- Internet connection for map tiles, Leaflet, and Google Fonts
+- Internet access for map tiles and hosted fonts
 
-## Run locally
-1. Open this folder in a terminal.
-2. Install dependencies:
+## Run Locally
 
-   ```bash
-   npm install
-   ```
+```bash
+cd routzy
+npm install
+npm start
+```
 
-3. Review `.env` and replace `SESSION_SECRET` with a long random value for anything beyond local demo use.
-4. Start the server:
+Open: http://localhost:3000
 
-   ```bash
-   npm start
-   ```
+The SQLite database is created automatically at `data/routzy.sqlite`. Starting with an empty users table seeds the demo accounts and sample route.
 
-5. Open http://localhost:3000
+## Environment Variables
 
-The SQLite database is created automatically in `data/routzy.sqlite`; first startup seeds demo records if the users table is empty.
+| Variable | Purpose |
+|---|---|
+| `PORT` | Optional local server port. Render provides this automatically. |
+| `SESSION_SECRET` | Secret used to sign session cookies. Use a long random value in production. |
 
-## Demo accounts
-- Admin: `admin` / `Routzy@123`
-- Student: `student` / `Student@123`
-- Driver: `driver` / `Driver@123`
+For local use, `.env` can contain:
 
-These credentials are for local demonstration only. Change them before any shared or public deployment.
+```env
+PORT=3000
+SESSION_SECRET=replace-with-a-long-random-secret
+```
 
-## Demo workflow
-1. Sign in as Admin and review the seeded bus, route, driver, and student.
-2. Open a separate browser profile/window and sign in as Driver.
-3. Start GPS tracking and allow location permission. Keep the page open.
-4. Sign in as Student in another separate session and open Live Tracking. The map receives location updates through Socket.IO.
-5. Return to Admin and refresh Bus Status to inspect the latest location and timestamp.
-6. Admin can add, edit, and delete records in the Manage Records section.
+Do not commit `.env` or real credentials.
 
-## Testing GPS on a phone
-Browser GPS works on `localhost` and secure contexts such as HTTPS. For a physical phone, use a trusted HTTPS development tunnel or deploy to an HTTPS host; do not expose this development server publicly without proper deployment security. Grant location permission and keep the driver page open. The current MVP sends location while the page is active; it is not a background-tracking app.
+## Deploy on Render
 
-## MVP limitations
-- Distance is straight-line distance to the configured pickup stop, not road distance.
-- No routing-engine ETA, push notifications, CSV reports, or background GPS tracking.
-- Session storage uses Express's default in-memory store, appropriate only for a local demo. Configure a persistent session store and HTTPS cookies before deployment.
-- The sample route and stops are illustrative demo data. Replace coordinates and names with your college's real route before presenting it as local information.
-- OpenStreetMap tiles and CDN-hosted libraries require internet access.
+1. Fork or push this repository to GitHub.
+2. Sign in to Render and create a **New Web Service**.
+3. Connect this GitHub repository.
+4. Use:
+   - **Runtime:** Node
+   - **Build command:** `npm install`
+   - **Start command:** `npm start`
+   - **Node version:** `22`
+5. Add `SESSION_SECRET` as an environment variable and generate a random value.
+6. Deploy the service.
 
-## Reset demo data
-Stop the server and delete `data/routzy.sqlite`. Start the server again; the database schema and demo records will be recreated. This permanently deletes local changes.
+A `render.yaml` file is included for Blueprint deployment.
+
+## Reset Demo Data
+
+Stop the server and delete:
+
+```text
+data/routzy.sqlite
+```
+
+Restart the server to recreate the schema and demo records. This permanently deletes local changes and assignments.
+
+## GPS Testing
+
+Browser location sharing requires permission and works on HTTPS or localhost. GPS is active while the driver page remains open; it is not background tracking.
+
+## MVP Limitations
+
+- SQLite storage is ephemeral on Render's free plan unless persistent storage or an external database is configured.
+- Free Render instances spin down after inactivity.
+- Free hosting does not provide a persistent disk.
+- Distance to a pickup stop is a straight-line distance, not road distance.
+- No routing engine, push notifications, CSV reports, or background GPS tracking are included.
+- Session storage uses Express's in-memory store and is intended for local/demo use.
+- Sample route coordinates and names are illustrative and should be replaced with real college information.
+
+## Project Structure
+
+```text
+routzy/
+├── database.js
+├── package.json
+├── render.yaml
+├── schema.sql
+├── server.js
+├── public/
+│   ├── admin.html
+│   ├── driver.html
+│   ├── index.html
+│   ├── login.html
+│   ├── student.html
+│   ├── script.js
+│   └── style.css
+└── data/
+```
