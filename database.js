@@ -19,11 +19,14 @@ function seed() {
   const driverId = Number(addUser.run('driver', bcrypt.hashSync('Driver@123', 10), 'driver', 'Ravi Patel', 'driver@routzy.local').lastInsertRowid);
   const routeId = Number(db.prepare('INSERT INTO routes (name, description) VALUES (?, ?)').run('Dewas–Campus Route', 'Demo route serving Dewas and the campus').lastInsertRowid);
   const stop = db.prepare('INSERT INTO stops (route_id, name, latitude, longitude, stop_order) VALUES (?, ?, ?, ?, ?)');
-  const pickupId = Number(stop.run(routeId, 'Dewas Bus Stand', 22.965, 76.055, 1).lastInsertRowid);
+  const pickupId = Number(stop.run(routeId, 'Bus Stand', 22.965, 76.055, 1).lastInsertRowid);
   const dropoffId = Number(stop.run(routeId, 'Campus Gate', 22.626, 75.805, 2).lastInsertRowid);
   const busId = Number(db.prepare('INSERT INTO buses (bus_number, route_id, driver_id) VALUES (?, ?, ?)').run('RZ-01', routeId, driverId).lastInsertRowid);
   db.prepare('INSERT INTO student_assignments (student_id, bus_id, pickup_stop_id, dropoff_stop_id) VALUES (?, ?, ?, ?)').run(studentId, busId, pickupId, dropoffId);
 }
 seed();
+
+// Keep the demo stop label consistent for databases created before it was renamed.
+db.prepare("UPDATE stops SET name = 'Bus Stand' WHERE name = 'Dewas Bus Stand'").run();
 
 module.exports = db;
